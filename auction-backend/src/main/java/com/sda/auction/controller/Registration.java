@@ -1,6 +1,7 @@
 package com.sda.auction.controller;
 
 import com.sda.auction.dto.UserDto;
+import com.sda.auction.model.User;
 import com.sda.auction.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,14 @@ public class Registration {
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<UserDto> post ( @Valid @RequestBody UserDto userDto ) {
-        System.out.println ( "am primit " + userDto );
-        UserDto userDtoResult = userService.addUser ( userDto );
+        User user = userService.findByEmail ( userDto.getEmail () );
+        if (user != null) {
+            //return error;
+            System.out.println ( "Email already in DB, please choose another" );
+            return new ResponseEntity<> ( HttpStatus.UNPROCESSABLE_ENTITY );
+        }
 
+        UserDto userDtoResult = userService.addUser ( userDto );
         return new ResponseEntity<> ( userDtoResult , HttpStatus.OK );
-}
+    }
 }
