@@ -23,14 +23,18 @@ public class Registration {
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<UserDto> post ( @Valid @RequestBody UserDto userDto ) {
-        User user = userService.findByEmail ( userDto.getEmail () );
-        if (user != null) {
+
+        if (emailAlreadyRegistered(userDto.getEmail ())) {
             //return error;
-            System.out.println ( "Email already in DB, please choose another" );
             return new ResponseEntity<> ( HttpStatus.UNPROCESSABLE_ENTITY );
         }
 
         UserDto userDtoResult = userService.addUser ( userDto );
         return new ResponseEntity<> ( userDtoResult , HttpStatus.OK );
+    }
+
+    private boolean emailAlreadyRegistered ( String email ) {
+        User user = userService.findByEmail ( email );
+        return user != null;
     }
 }
