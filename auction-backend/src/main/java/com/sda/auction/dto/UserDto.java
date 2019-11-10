@@ -25,9 +25,15 @@ public class UserDto {
     @Email(message = "{error.user.email.pattern}")
     private String email;
 
+    @NotEmpty
     @Pattern(regexp = "((.*)[A-Z]+(.*))", message = "Password should contain at least one capital letter!")
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
+
+    @NotEmpty
+    @Pattern(regexp = "((.*)[A-Z]+(.*))", message = "Password should contain at least one capital letter!")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
+    private String confirmPassword;
 
 
 }

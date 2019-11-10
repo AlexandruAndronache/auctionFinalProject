@@ -1,8 +1,8 @@
 package com.sda.auction.controller;
 
 import com.sda.auction.dto.UserDto;
-import com.sda.auction.model.User;
 import com.sda.auction.service.UserService;
+import com.sda.auction.validator.UserDtoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,10 @@ import javax.validation.Valid;
 @RequestMapping("/api/register")
 public class Registration {
     @Autowired
-    UserService userService;
+    private UserService userService;
+
+    @Autowired
+    private UserDtoValidator userDtoValidator;
 
     @GetMapping
     public ResponseEntity<String> get () {
@@ -24,17 +27,12 @@ public class Registration {
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<UserDto> post ( @Valid @RequestBody UserDto userDto ) {
 
-        if (emailAlreadyRegistered(userDto.getEmail ())) {
-            //return error;
-            return new ResponseEntity<> ( HttpStatus.UNPROCESSABLE_ENTITY );
-        }
+        userDtoValidator.validate ( userDto );
 
         UserDto userDtoResult = userService.addUser ( userDto );
+
         return new ResponseEntity<> ( userDtoResult , HttpStatus.OK );
     }
 
-    private boolean emailAlreadyRegistered ( String email ) {
-        User user = userService.findByEmail ( email );
-        return user != null;
-    }
+
 }
